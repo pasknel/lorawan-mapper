@@ -74,6 +74,16 @@ Start the gateway listener (runs by default on 0.0.0.0:1700)
 $ ./lorawan-mapper capture
 ```
 
+LoRaWAN-Mapper creates two files:
+- A PCAP file (default: `capture.pcap`)
+- A named pipe (default: `/tmp/lorawan`)
+
+Open the named pipe in wireshark:
+
+```
+$ sudo wireshark -k -i /tmp/lorawan
+```
+
 ## Neo4j: Sample Queries
 
 Visualize relationships between End-Devices and Join Servers (OTAA procedure)
