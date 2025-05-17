@@ -16,11 +16,14 @@ type Neo4jClient struct {
 }
 
 func NewNeo4jClient() (Neo4jClient, error) {
-	client := Neo4jClient{}
+	viper.SetConfigFile("config.yaml")
+	viper.ReadInConfig()
 
 	uri := viper.GetString("NEO4J_URI")
 	username := viper.GetString("NEO4J_USERNAME")
 	password := viper.GetString("NEO4J_PASSWORD")
+
+	client := Neo4jClient{}
 
 	driver, err := neo4j.NewDriver(uri, neo4j.BasicAuth(username, password, ""), func(c *neo4j.Config) {
 		c.Encrypted = false
@@ -97,8 +100,6 @@ func SetupNeo4j() error {
 		}
 	}
 
-	log.Println("neo4j setup finished")
-
 	return nil
 }
 
@@ -129,7 +130,7 @@ func GraphJoinRequest(joinReq lorawan.JoinRequestPayload) error {
 	return nil
 }
 
-func GraphUnconfirmedDataUp(mac lorawan.MACPayload) error {
+func GraphDataUp(mac lorawan.MACPayload) error {
 	neo4jClient, err := NewNeo4jClient()
 	if err != nil {
 		return fmt.Errorf("error creating neo4j client - err: %v", err)
@@ -155,11 +156,13 @@ func GraphUnconfirmedDataUp(mac lorawan.MACPayload) error {
 	query = "MATCH (d:Device {NwkAddr: $NwkAddr, NwkId: $NwkId}) " +
 		"MATCH (n:Network {NwkId: $NwkId}) " +
 		"MERGE (d)-[:DataUp{fport: $FPort}]->(n)"
+
 	parameters = map[string]interface{}{
 		"NwkAddr": nwkAddr,
 		"NwkId":   nwkId,
 		"FPort":   mac.FPort,
 	}
+
 	neo4jClient.Write(query, parameters)
 
 	return nil

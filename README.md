@@ -1,5 +1,17 @@
 # LoRaWAN Mapper
 
+A tool for capturing LoRaWAN messages and visualizing networks.
+
+## Build
+
+Clone the repository and build the project with Golang:
+
+```
+$ git clone https://github.com/pasknel/lorawan-mapper.git
+$ cd lorawan-mapper
+$ go build
+```
+
 ## Usage
 
 ```
@@ -9,16 +21,23 @@ Capture and visualize LoRaWAN messages
 
 Usage:
   lorawan-mapper [flags]
+  lorawan-mapper [command]
+
+Available Commands:
+  capture     Capture LoRaWAN messages
+  completion  Generate the autocompletion script for the specified shell
+  help        Help about any command
+  setup       Setup neo4j database
 
 Flags:
-  -b, --bind string   Bind address (ip:port) (default "0.0.0.0:1700")
-  -h, --help          help for lorawan-mapper
-  -l, --log string    Log File Path (default "gateway.log")
+  -h, --help   help for lorawan-mapper
+
+Use "lorawan-mapper [command] --help" for more information about a command.
 ```
 
 ## Neo4j Database
 
-Neo4j Docker container:
+Start a Neo4j Docker container:
 
 ```
 docker run \
@@ -31,6 +50,28 @@ docker run \
     -v $HOME/neo4j/plugins:/plugins \
     --env NEO4J_AUTH=neo4j/password \
     neo4j:latest
+```
+
+Create a config.yaml file with the credentials for Neo4j:
+
+```yaml
+NEO4J_URI: neo4j://localhost:7687
+NEO4J_USERNAME: neo4j
+NEO4J_PASSWORD: password
+```
+
+Setup the Neo4j database:
+
+```
+$ ./lorawan-mapper setup
+```
+
+## Capturing Packets
+
+Start the gateway listener (runs by default on 0.0.0.0:1700)
+
+```
+$ ./lorawan-mapper capture
 ```
 
 ## Neo4j: Sample Queries

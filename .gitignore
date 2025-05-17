@@ -10,5 +10,8 @@ bin/
 # Log files
 *.log
 
+# PCAPs
+*.pcap
+
 # Main binary
 lorawan-mapper
